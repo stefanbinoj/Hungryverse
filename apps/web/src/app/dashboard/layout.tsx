@@ -36,9 +36,9 @@ export default function DashboardLayout({
                 return (
                 <Link
                     key={link.href}
-                    href={link.href}
+                    href={link.href }
                     className={clsx(
-                        'flex items-center rounded-lg px-4 py-2 text-sidebar-foreground hover:bg-sidebar-accent',
+                        'flex items-center rounded-lg px-4 py-2 text-sidebar-foreground ',
                         {
                             'bg-sidebar-accent text-sidebar-accent-foreground': isActive,
                         }
@@ -59,7 +59,7 @@ export default function DashboardLayout({
                     key={link.href}
                     href={link.href}
                     className={clsx(
-                        'flex items-center rounded-lg px-4 py-2 text-sidebar-foreground hover:bg-sidebar-accent',
+                        'flex items-center rounded-lg px-4 py-2 text-sidebar-foreground ',
                         {
                             'bg-sidebar-accent text-sidebar-accent-foreground': isActive,
                         }
