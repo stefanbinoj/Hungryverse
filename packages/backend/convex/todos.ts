@@ -7,6 +7,15 @@ export const getAll = query({
 	},
 });
 
+export const get = query({
+	args: {
+		id: v.id("todos"),
+	},
+	handler: async (ctx, args) => {
+		return await ctx.db.get(args.id);
+	},
+});
+
 export const create = mutation({
 	args: {
 		text: v.string(),
@@ -17,6 +26,17 @@ export const create = mutation({
 			completed: false,
 		});
 		return await ctx.db.get(newTodoId);
+	},
+});
+
+export const update = mutation({
+	args: {
+		id: v.id("todos"),
+		text: v.string(),
+	},
+	handler: async (ctx, args) => {
+		await ctx.db.patch(args.id, { text: args.text });
+		return { success: true };
 	},
 });
 
