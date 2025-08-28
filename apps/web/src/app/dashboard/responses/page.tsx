@@ -89,7 +89,7 @@ export default function ResponsesPage() {
                   <CardTitle>Rating: {response.rating} / 5</CardTitle>
                   <AlertDialog>
                     <AlertDialogTrigger asChild onClick={(e) => e.stopPropagation()}>
-                      <Button variant="destructive" size="icon">
+                      <Button variant="destructive" size="icon" className="cursor-pointer">
                         <Trash2 className="h-4 w-4" />
                       </Button>
                     </AlertDialogTrigger>
@@ -101,8 +101,8 @@ export default function ResponsesPage() {
                         </AlertDialogDescription>
                       </AlertDialogHeader>
                       <AlertDialogFooter>
-                        <AlertDialogCancel>Cancel</AlertDialogCancel>
-                        <AlertDialogAction onClick={() => handleDelete(response.id)}>Delete</AlertDialogAction>
+                        <AlertDialogCancel className="cursor-pointer">Cancel</AlertDialogCancel>
+                        <AlertDialogAction variant="destructive" onClick={() => handleDelete(response.id)} className="cursor-pointer">Delete</AlertDialogAction>
                       </AlertDialogFooter>
                     </AlertDialogContent>
                   </AlertDialog>
