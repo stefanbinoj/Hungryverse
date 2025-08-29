@@ -5,7 +5,7 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
-import { Trash2, Star } from 'lucide-react';
+import { Trash2, Star, Phone } from 'lucide-react';
 
 const dummyResponses = [
   {
@@ -88,12 +88,12 @@ export default function ResponsesPage() {
                 <div className="flex justify-between items-center">
                   <CardTitle>Rating: {response.rating} / 5</CardTitle>
                   <AlertDialog>
-                    <AlertDialogTrigger asChild onClick={(e) => e.stopPropagation()}>
-                      <Button variant="destructive" size="icon" className="cursor-pointer">
+                    <AlertDialogTrigger onClick={(e) => e.stopPropagation()}>
+                      <Button variant="destructive" size="icon" className="cursor-pointer w-8 h-8 rounded-full">
                         <Trash2 className="h-4 w-4" />
                       </Button>
                     </AlertDialogTrigger>
-                    <AlertDialogContent>
+                    <AlertDialogContent className="bg-card text-card-foreground">
                       <AlertDialogHeader>
                         <AlertDialogTitle>Are you sure?</AlertDialogTitle>
                         <AlertDialogDescription>
@@ -102,7 +102,7 @@ export default function ResponsesPage() {
                       </AlertDialogHeader>
                       <AlertDialogFooter>
                         <AlertDialogCancel className="cursor-pointer">Cancel</AlertDialogCancel>
-                        <AlertDialogAction variant="destructive" onClick={() => handleDelete(response.id)} className="cursor-pointer">Delete</AlertDialogAction>
+                        <AlertDialogAction variant="destructive" onClick={() => handleDelete(response.id)} className="bg-red-700 text-white cursor-pointer">Delete</AlertDialogAction>
                       </AlertDialogFooter>
                     </AlertDialogContent>
                   </AlertDialog>
@@ -118,24 +118,39 @@ export default function ResponsesPage() {
 
       {selectedResponse && (
         <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-          <DialogContent>
+          <DialogContent className="sm:max-w-lg">
             <DialogHeader>
               <DialogTitle>Response Details</DialogTitle>
-              <DialogDescription>
-                <div className="mt-4">
-                  <div className="flex items-center mb-2">
-                    <p className="font-semibold mr-2">Services:</p>
-                    <StarRating rating={selectedResponse.services} />
-                  </div>
-                  <div className="flex items-center mb-2">
-                    <p className="font-semibold mr-2">Cleanliness:</p>
-                    <StarRating rating={selectedResponse.cleanliness} />
-                  </div>
-                  <p className="mb-2"><span className="font-semibold">Note from user:</span> {selectedResponse.note || 'N/A'}</p>
-                  <p className="mb-2"><span className="font-semibold">Phone number:</span> {selectedResponse.phone}</p>
-                </div>
-              </DialogDescription>
             </DialogHeader>
+            <div className="mt-4 space-y-4">
+              <div>
+                <p className="font-semibold">Overall Rating</p>
+                <StarRating rating={selectedResponse.rating} />
+              </div>
+              <div>
+                <p className="font-semibold">Comment</p>
+                <p>{selectedResponse.comment}</p>
+              </div>
+              <div>
+                <p className="font-semibold">Services</p>
+                <StarRating rating={selectedResponse.services} />
+              </div>
+              <div>
+                <p className="font-semibold">Cleanliness</p>
+                <StarRating rating={selectedResponse.cleanliness} />
+              </div>
+              <div>
+                <p className="font-semibold">Note from user</p>
+                <p>{selectedResponse.note || 'N/A'}</p>
+              </div>
+              <div>
+                <p className="font-semibold">Phone number</p>
+                <a href={`tel:${selectedResponse.phone}`} className="flex items-center gap-2 text-blue-500 hover:underline">
+                  <Phone className="h-4 w-4" />
+                  {selectedResponse.phone}
+                </a>
+              </div>
+            </div>
           </DialogContent>
         </Dialog>
       )}

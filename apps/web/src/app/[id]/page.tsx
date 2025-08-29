@@ -89,10 +89,6 @@ export default function RestaurantFeedbackForm() {
                   rating={formData.cleanliness}
                   onRatingChange={(rating) => setFormData((prev) => ({ ...prev, cleanliness: rating }))}
                 />
-                <div className="flex justify-between text-sm text-gray-500 mt-4">
-                  <span>Not good</span>
-                  <span>Very satisfied</span>
-                </div>
               </div>
             )}
 
@@ -103,10 +99,6 @@ export default function RestaurantFeedbackForm() {
                   rating={formData.service}
                   onRatingChange={(rating) => setFormData((prev) => ({ ...prev, service: rating }))}
                 />
-                <div className="flex justify-between text-sm text-gray-500 mt-4">
-                  <span>Not good</span>
-                  <span>Very satisfied</span>
-                </div>
               </div>
             )}
 
@@ -127,7 +119,7 @@ export default function RestaurantFeedbackForm() {
                 <h2 className="text-xl font-semibold text-gray-900 mb-6">Your phone number</h2>
                 <Input
                   type="tel"
-                  placeholder="+1 (555) 123-4567"
+                  placeholder="+91 98765 43210"
                   value={formData.phone}
                   onChange={(e) => setFormData((prev) => ({ ...prev, phone: e.target.value }))}
                   className="border-gray-200 focus:border-gray-400"
@@ -137,7 +129,7 @@ export default function RestaurantFeedbackForm() {
 
             <div className="flex justify-between mt-8">
               {currentStep > 1 ? (
-                <Button variant="ghost" onClick={handlePrevious} className="text-gray-600">
+                <Button variant="ghost" onClick={handlePrevious} className="border text-gray-600">
                   Back
                 </Button>
               ) : (
