@@ -20,10 +20,7 @@ export function Sidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="hidden lg:flex flex-col w-60 border-r border-sidebar-border bg-sidebar">
-      <div className="p-4 px-6">
-        <h2 className="text-xl font-bold text-sidebar-foreground">Formback</h2>
-      </div>
+    <aside className="hidden md:flex flex-col w-60 border-r border-sidebar-border bg-sidebar">
       <div className="flex flex-col justify-between flex-1 p-4">
         <nav className="flex flex-col">
           {mainLinks.map((link) => {

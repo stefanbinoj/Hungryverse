@@ -1,30 +1,27 @@
 "use client";
+
+import { SignInButton, UserButton, SignedIn, SignedOut } from "@clerk/nextjs";
 import Link from "next/link";
-
-
+import { MobileSidebar } from "@/app/dashboard/components/mobile-sidebar";
 export default function Header() {
-	const links = [
-		{ to: "/", label: "Home" },
-		{ to: "/todos", label: "Todos" },
-	] as const;
-
-	return (
-		<div>
-			<div className="flex flex-row items-center justify-between px-2 py-1">
-				<nav className="flex gap-4 text-lg">
-					{links.map(({ to, label }) => {
-						return (
-							<Link key={to} href={to}>
-								{label}
-							</Link>
-						);
-					})}
-				</nav>
-				<div className="flex items-center gap-2">
-					
-				</div>
-			</div>
-			<hr />
-		</div>
-	);
+  return (
+    <header className="flex items-center justify-between p-4 border-b border-sidebar-border">
+      <div className="flex items-center">
+        <div className="md:hidden">
+          <MobileSidebar />
+        </div>
+        <Link href="/" className="text-2xl font-bold">
+          hungryverse
+        </Link>
+      </div>
+      <div className=" items-center">
+        <SignedIn>
+          <UserButton />
+        </SignedIn>
+        <SignedOut>
+          <SignInButton />
+        </SignedOut>
+      </div>
+    </header>
+  );
 }

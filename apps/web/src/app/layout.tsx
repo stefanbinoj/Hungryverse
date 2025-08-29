@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import "../index.css";
 import Providers from "@/components/providers";
-import Header from "@/components/header";
+import {ClerkProvider} from "@clerk/nextjs";
 
 
 export const metadata: Metadata = {
@@ -19,11 +19,15 @@ export default function RootLayout({
 			<body
 				className={`antialiased`}
 			>
+    <ClerkProvider>
+
 				<Providers>
-					<div className="grid grid-rows-[auto_1fr] h-svh">
+					<div className="h-svh">
 						{children}
 					</div>
 				</Providers>
+    </ClerkProvider>
+
 			</body>
 		</html>
 	);
