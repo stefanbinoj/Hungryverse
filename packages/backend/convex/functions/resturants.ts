@@ -32,8 +32,8 @@ export const createResturant = mutation({
         const newResturantId = await ctx.db.insert("restaurants", {
             userId: identity.subject, // Clerk user ID here
             name: args.name,
-            imageUrl: args.imageUrl,
-            isAllowed: false, // Default to false
+            imageUrl: args.imageUrl || "https://png.pngtree.com/png-vector/20210121/ourmid/pngtree-restaurant-icon-design-template-illustration-png-image_2774777.jpg",
+            isAllowed: true, // Default to false
         });
 
         return await ctx.db.get(newResturantId);

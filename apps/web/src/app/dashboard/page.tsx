@@ -2,14 +2,13 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { useQuery } from "convex/react";
+import { useMutation, useQuery } from "convex/react";
 import { api } from "@feedbacl/backend/convex/_generated/api";
 import { Authenticated } from "convex/react";
 import { useModalStore } from "@/store/onboarding";
 
 import {
     Dialog,
-    DialogContent,
     DialogHeader,
     DialogTitle,
     DialogFooter,
@@ -40,12 +39,13 @@ function RedirectPage() {
     );
 
     useEffect(() => {
+        if (checkRestaurantExists === undefined) return; // Still loading
         if (checkRestaurantExists) {
             router.push("/dashboard/analytics");
         } else {
             setShowOnboardingModal(true);
         }
-    }, [checkRestaurantExists, router]);
+    }, [checkRestaurantExists]);
 
     if (showOnboardingModal)
         return (
@@ -69,9 +69,14 @@ function OnboardingModal({
 }: OnboardingModalProps) {
     const [name, setName] = useState("");
     const [imageUrl, setImageUrl] = useState("");
-
+    const createRestaurant = useMutation(
+        api.functions.resturants.createResturant,
+    );
     const handleSubmit = () => {
-        // TODO: call convex mutation to save restaurant
+        createRestaurant({ name, imageUrl }).then(() => {
+            setIsModalOpen(false);
+            window.location.reload(); // Reload to reflect the new restaurant
+        });
         setIsModalOpen(false);
     };
 
