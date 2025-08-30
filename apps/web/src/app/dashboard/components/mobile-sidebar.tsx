@@ -1,19 +1,20 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type ElementType } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { BarChart, MessageSquare, Settings, Info, Menu } from "lucide-react";
 import clsx from "clsx";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
+import { type Route } from "next";
 
-const mainLinks = [
+const mainLinks: { href: Route; label: string; icon: ElementType }[] = [
   { href: "/dashboard/analytics", label: "Analytics", icon: BarChart },
   { href: "/dashboard/responses", label: "Responses", icon: MessageSquare },
 ];
 
-const bottomLinks = [
+const bottomLinks: { href: Route; label: string; icon: ElementType }[] = [
   { href: "/dashboard/settings", label: "Settings", icon: Settings },
   { href: "/dashboard/about", label: "About", icon: Info },
 ];

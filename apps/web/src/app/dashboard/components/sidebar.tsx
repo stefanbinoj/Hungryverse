@@ -5,13 +5,15 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { BarChart, MessageSquare, Settings, Info } from 'lucide-react';
 import clsx from 'clsx';
+import { type Route } from 'next';
+import { type ElementType } from 'react';
 
-const mainLinks = [
+const mainLinks: { href: Route; label: string; icon: ElementType }[] = [
   { href: '/dashboard/analytics', label: 'Analytics', icon: BarChart },
   { href: '/dashboard/responses', label: 'Responses', icon: MessageSquare },
 ];
 
-const bottomLinks = [
+const bottomLinks: { href: Route; label: string; icon: ElementType }[] = [
   { href: '/dashboard/settings', label: 'Settings', icon: Settings },
   { href: '/dashboard/about', label: 'About', icon: Info },
 ];
