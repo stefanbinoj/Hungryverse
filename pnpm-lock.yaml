@@ -100,6 +100,9 @@ importers:
         specifier: ^1.25.4
         version: 1.26.2(@clerk/clerk-react@5.45.0(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(react@19.1.1)
     devDependencies:
+      '@types/node':
+        specifier: ^20.19.11
+        version: 20.19.11
       typescript:
         specifier: ^5.9.2
         version: 5.9.2

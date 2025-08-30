@@ -98,7 +98,7 @@ export default function ResponsesPage() {
                 <div className="flex justify-between items-center">
                   <CardTitle>Rating: {response.rating} / 5</CardTitle>
                   <AlertDialog>
-                    <AlertDialogTrigger onClick={(e) => e.stopPropagation()}>
+                    <AlertDialogTrigger asChild onClick={(e) => e.stopPropagation()}>
                       <Button variant="destructive" size="icon" className="cursor-pointer w-8 h-8 rounded-full">
                         <Trash2 className="h-4 w-4" />
                       </Button>

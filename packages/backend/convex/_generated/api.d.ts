@@ -13,8 +13,8 @@ import type {
   FilterApi,
   FunctionReference,
 } from "convex/server";
+import type * as functions_resturants from "../functions/resturants.js";
 import type * as healthCheck from "../healthCheck.js";
-import type * as todos from "../todos.js";
 
 /**
  * A utility for referencing Convex functions in your app's API.
@@ -25,8 +25,8 @@ import type * as todos from "../todos.js";
  * ```
  */
 declare const fullApi: ApiFromModules<{
+  "functions/resturants": typeof functions_resturants;
   healthCheck: typeof healthCheck;
-  todos: typeof todos;
 }>;
 export declare const api: FilterApi<
   typeof fullApi,

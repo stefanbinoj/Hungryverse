@@ -1,34 +1,27 @@
 import type { Metadata } from "next";
 import "../index.css";
 import Providers from "@/components/providers";
-import {ClerkProvider} from "@clerk/nextjs";
-
+import { ClerkProvider } from "@clerk/nextjs";
 
 export const metadata: Metadata = {
-	title: "feedbacl",
-	description: "feedbacl",
+    title: "feedbacl",
+    description: "HungryVerse feedback app",
 };
 
 export default function RootLayout({
-	children,
+    children,
 }: Readonly<{
-	children: React.ReactNode;
+    children: React.ReactNode;
 }>) {
-	return (
-		<html lang="en" suppressHydrationWarning>
-			<body
-				className={`antialiased`}
-			>
-    <ClerkProvider>
-
-				<Providers>
-					<div className="h-svh">
-						{children}
-					</div>
-				</Providers>
-    </ClerkProvider>
-
-			</body>
-		</html>
-	);
+    return (
+        <html lang="en" suppressHydrationWarning>
+            <body className={`antialiased`}>
+                <ClerkProvider>
+                    <Providers>
+                        <div className="h-svh">{children}</div>
+                    </Providers>
+                </ClerkProvider>
+            </body>
+        </html>
+    );
 }
