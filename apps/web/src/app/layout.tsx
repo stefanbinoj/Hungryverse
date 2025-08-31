@@ -4,7 +4,7 @@ import Providers from "@/components/providers";
 import { ClerkProvider } from "@clerk/nextjs";
 
 export const metadata: Metadata = {
-    title: "feedbacl",
+    title: "HungryVerse Feedback",
     description: "HungryVerse feedback app",
 };
 
@@ -18,7 +18,7 @@ export default function RootLayout({
             <body className={`antialiased`}>
                 <ClerkProvider>
                     <Providers>
-                        <div className="h-svh">{children}</div>
+                        <div>{children}</div>
                     </Providers>
                 </ClerkProvider>
             </body>
