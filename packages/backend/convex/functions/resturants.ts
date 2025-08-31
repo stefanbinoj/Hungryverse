@@ -28,7 +28,7 @@ export const createResturant = mutation({
         if (!identity) {
             throw new Error("Not authenticated");
         }
-
+        console.log("Creating restaurant for user:", identity.subject);
         const newResturantId = await ctx.db.insert("restaurants", {
             userId: identity.subject, // Clerk user ID here
             name: args.name,
