@@ -8,7 +8,8 @@ import { AboutCard } from "../components/about-card";
 import { Authenticated } from "convex/react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
-import { Download, Eye } from "lucide-react";
+import { Check, Copy, Download, Eye } from "lucide-react";
+import { toast } from "sonner";
 
 export default function AboutPage() {
     return (
@@ -32,6 +33,7 @@ export default function AboutPage() {
 function QRCode() {
     const qrRef = useRef<HTMLDivElement>(null);
     const [url, setUrl] = useState("");
+    const [copied, setCopied] = useState(false);
 
     const getRestaurantId = useQuery(api.functions.resturants.getRestaurantId);
 
@@ -53,6 +55,16 @@ function QRCode() {
         a.click();
     };
 
+    const copyToClipboard = () => {
+        navigator.clipboard.writeText(url).then(() => {
+            setCopied(true);
+            toast.success("Link copied to clipboard");
+            setTimeout(() => {
+                setCopied(false);
+            }, 2000);
+        });
+    };
+
     if (!getRestaurantId) return null; // Don't render until ID is ready
 
     return (
@@ -68,10 +80,29 @@ function QRCode() {
                         <Eye className="h-4 w-4" />
                     </Button>
                 </DialogTrigger>
-                <DialogContent className="w-[320px] sm:w-[400px] rounded-2xl shadow-xl">
-                    <div className="flex flex-col items-center gap-4">
-                        <div>
-                            <QRCodeCanvas value={url} size={256} />
+                <DialogContent className="w-fit rounded-2xl shadow-xl">
+                    <div className="flex flex-col items-center gap-4 p-4">
+                        <div className="rounded-lg border p-4">
+                            <QRCodeCanvas value={url} size={220} />
+                        </div>
+                        <div className="flex w-full items-center gap-2">
+                            <input
+                                className="flex h-10 w-full rounded-md border border-border bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50"
+                                value={url}
+                                readOnly
+                            />
+                            <Button
+                                variant="outline"
+                                size="icon"
+                                onClick={copyToClipboard}
+                                className=" border-black hover:border-black/20"
+                            >
+                                {copied ? (
+                                    <Check className="h-4 w-4 text-green-500" />
+                                ) : (
+                                    <Copy className="h-4 w-4" />
+                                )}
+                            </Button>
                         </div>
                     </div>
                 </DialogContent>

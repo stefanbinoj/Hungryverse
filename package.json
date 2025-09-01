@@ -14,7 +14,9 @@
 		"dev:server": "turbo -F @feedbacl/backend dev",
 		"dev:setup": "turbo -F @feedbacl/backend dev:setup"
 	},
-	"dependencies": {},
+	"dependencies": {
+		"framer-motion": "^12.23.12"
+	},
 	"devDependencies": {
 		"turbo": "^2.5.4"
 	},
