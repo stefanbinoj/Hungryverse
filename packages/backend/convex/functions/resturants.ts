@@ -59,9 +59,7 @@ export const getMyRestaurant = query({
             .first();
 
         console.log("My restaurant:", myRestaurant);
-        return (
-            myRestaurant || null
-        );
+        return myRestaurant || null;
     },
 });
 export const updateRestaurant = mutation({
@@ -95,5 +93,25 @@ export const updateRestaurant = mutation({
         await ctx.db.patch(myRestaurant._id, updatedFields);
 
         return await ctx.db.get(myRestaurant._id);
+    },
+});
+
+export const getRestaurantId = query({
+    handler: async (ctx) => {
+        const identity = await ctx.auth.getUserIdentity();
+        if (!identity) {
+            throw new Error("Not authenticated");
+        }
+
+        const myRestaurant = await ctx.db
+            .query("restaurants")
+            .filter((q) => q.eq(q.field("userId"), identity.subject))
+            .first();
+
+        if (!myRestaurant) {
+            throw new Error("Restaurant not found");
+        }
+
+        return myRestaurant._id;
     },
 });

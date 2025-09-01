@@ -6,11 +6,25 @@ import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 export function SettingsForm() {
   const [minValue, setMinValue] = React.useState<number>(10);
   const [redirectEnabled, setRedirectEnabled] = React.useState<boolean>(false);
   const [couponEnabled, setCouponEnabled] = React.useState<boolean>(false);
+  const [showDialog, setShowDialog] = React.useState<boolean>(false);
+  const [intendedRedirectState, setIntendedRedirectState] =
+    React.useState<boolean>(false);
 
   return (
     <Card className="">
@@ -49,13 +63,37 @@ export function SettingsForm() {
               Toggle to enable redirect behavior.
             </p>
           </div>
-          <Switch
-            id="redirect"
-            checked={redirectEnabled}
-            onCheckedChange={setRedirectEnabled}
-            aria-label="Enable redirection"
-            className="border border-border"
-          />
+          <AlertDialog open={showDialog} onOpenChange={setShowDialog}>
+            <AlertDialogTrigger asChild>
+              <Switch
+                id="redirect"
+                checked={redirectEnabled}
+                onCheckedChange={(checked) => {
+                  setIntendedRedirectState(checked);
+                  setShowDialog(true);
+                }}
+                aria-label="Enable redirection"
+                className="border border-border"
+              />
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  This will {intendedRedirectState ? "enable" : "disable"} the
+                  redirect behavior.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={() => setRedirectEnabled(intendedRedirectState)}
+                >
+                  Continue
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </div>
 
         <div className="my-6 h-px w-full bg-border" />
