@@ -5,6 +5,7 @@ export default defineSchema({
     restaurants: defineTable({
         userId: v.string(),
         name: v.string(),
+        email: v.optional(v.string()),
         imageUrl: v.optional(v.string()),  
         isAllowed: v.boolean(),
     }),

@@ -13,7 +13,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
                 <ConvexProviderWithClerk client={convex} useAuth={useAuth}>
                     {children}
                 </ConvexProviderWithClerk>
-            <Toaster richColors />
+            <Toaster  />
         </>
     );
 }

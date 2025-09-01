@@ -20,6 +20,13 @@ export default function FeedbackChart() {
   const [range, setRange] = React.useState<RangeKey>("daily")
   const data = datasets[range]
 
+  // Responsive tick handling
+  const interval = React.useMemo(() => {
+    if (range === "daily") return 5 // every 6 hours
+    if (range === "monthly") return 4 // every 5 days
+    return 0 // show all for weekly
+  }, [range])
+
   return (
     <Card>
       <CardHeader className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
@@ -50,7 +57,15 @@ export default function FeedbackChart() {
           {/* ChartContainer wraps children in ResponsiveContainer; just render BarChart */}
           <BarChart data={data} margin={{ left: 8, right: 8 }}>
             <CartesianGrid strokeDasharray="3 3" vertical={false} />
-            <XAxis dataKey="label" tickLine={false} axisLine={false} tickMargin={8} />
+            <XAxis
+              dataKey="label"
+              tickLine={false}
+              axisLine={false}
+              tickMargin={8}
+              interval={interval}
+              // Use a smaller font size for the ticks to prevent overlap on smaller screens
+              tick={{ fontSize: 12 }}
+            />
             <YAxis allowDecimals={false} width={40} tickLine={false} axisLine={false} />
             <ChartTooltip content={<ChartTooltipContent />} />
             <Bar dataKey="count" fill="var(--color-count)" radius={[4, 4, 0, 0]} aria-label="Feedback count" />
