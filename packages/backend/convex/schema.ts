@@ -7,6 +7,9 @@ export default defineSchema({
         name: v.string(),
         email: v.string(),
         imageUrl: v.optional(v.string()),  
+        minValue: v.number(),
+        allowRedirection: v.boolean(),
+        allowCouponCodeGeneration: v.boolean(),
         isAllowed: v.boolean(),
     }),
 

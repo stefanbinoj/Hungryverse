@@ -7,13 +7,7 @@ import { api } from "@feedbacl/backend/convex/_generated/api";
 import { AboutCard } from "../components/about-card";
 import { Authenticated } from "convex/react";
 import { Button } from "@/components/ui/button";
-import {
-    Dialog,
-    DialogContent,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Download, Eye } from "lucide-react";
 
 export default function AboutPage() {

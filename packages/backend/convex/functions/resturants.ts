@@ -4,7 +4,6 @@ import { v } from "convex/values";
 export const checkRestaurantExists = query({
     handler: async (ctx) => {
         const identity = await ctx.auth.getUserIdentity();
-        console.log("identity", identity);
         if (!identity) {
             throw new Error("Not authenticated");
         }
@@ -28,7 +27,6 @@ export const createResturant = mutation({
         if (!identity) {
             throw new Error("Not authenticated");
         }
-        console.log("Creating restaurant for user:", identity.subject);
         const newResturantId = await ctx.db.insert("restaurants", {
             userId: identity.subject, // Clerk user ID here
             name: args.name,
@@ -40,6 +38,9 @@ export const createResturant = mutation({
                 args.imageUrl ||
                 "https://png.pngtree.com/png-vector/20210121/ourmid/pngtree-restaurant-icon-design-template-illustration-png-image_2774777.jpg",
             isAllowed: true, // Default to false
+            minValue: 3,
+            allowRedirection: false,
+            allowCouponCodeGeneration: true,
         });
 
         return await ctx.db.get(newResturantId);
@@ -62,6 +63,7 @@ export const getMyRestaurant = query({
         return myRestaurant || null;
     },
 });
+
 export const updateRestaurant = mutation({
     args: {
         name: v.optional(v.string()),

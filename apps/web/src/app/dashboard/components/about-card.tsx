@@ -36,12 +36,12 @@ export function AboutCard() {
 
     useEffect(() => {
         if (getMyResturant === undefined || null) return;
-        setEmail(getMyResturant.email || "");
-        setName(getMyResturant.name || "");
-        setImageUrl(
-            getMyResturant.imageUrl ||
-            "https://png.pngtree.com/png-vector/20210121/ourmid/pngtree-restaurant-icon-design-template-illustration-png-image_2774777.jpg",
-        );
+            setEmail(getMyResturant?.email || "");
+            setName(getMyResturant?.name || "");
+            setImageUrl(
+                getMyResturant?.imageUrl ||
+                "https://png.pngtree.com/png-vector/20210121/ourmid/pngtree-restaurant-icon-design-template-illustration-png-image_2774777.jpg",
+            );
     }, [getMyResturant]);
 
     const updateResturant = useMutation(
