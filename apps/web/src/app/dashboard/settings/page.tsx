@@ -105,18 +105,22 @@ export function SettingsForm() {
                     </div>
                     <AlertDialog open={showDialog} onOpenChange={setShowDialog}>
                         <div className="dark">
-                        <AlertDialogTrigger asChild className="z-10 bg-transparent text-foreground">
-                            <Switch
-                                id="redirect"
-                                checked={redirectEnabled}
-                                onCheckedChange={(checked) => {
-                                    setIntendedRedirectState(checked);
-                                    setShowDialog(true);
-                                }}
-                                aria-label="Enable redirection"
-                                className="border border-border data-[state=checked]:bg-primary data-[state=unchecked]:bg-muted-foreground"
-                            />
-                        </AlertDialogTrigger></div>
+                            <AlertDialogTrigger
+                                asChild
+                                className="z-10 bg-transparent text-foreground"
+                            >
+                                <Switch
+                                    id="redirect"
+                                    checked={redirectEnabled}
+                                    onCheckedChange={(checked) => {
+                                        setIntendedRedirectState(checked);
+                                        setShowDialog(true);
+                                    }}
+                                    aria-label="Enable redirection"
+                                    className="border border-border data-[state=checked]:bg-primary data-[state=unchecked]:bg-muted-foreground"
+                                />
+                            </AlertDialogTrigger>
+                        </div>
                         <AlertDialogContent>
                             <AlertDialogHeader>
                                 <AlertDialogTitle>Are you sure?</AlertDialogTitle>
