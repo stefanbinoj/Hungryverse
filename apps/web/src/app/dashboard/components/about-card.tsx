@@ -3,163 +3,221 @@
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
-    Card,
-    CardContent,
-    CardFooter,
-    CardHeader,
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
 } from "@/components/ui/card";
 import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-    DialogClose,
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogClose,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { FileUp } from "lucide-react";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "@feedbacl/backend/convex/_generated/api";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 
 export function AboutCard() {
-    const [email, setEmail] = useState("");
-    const [name, setName] = useState("");
-    const [imageUrl, setImageUrl] = useState(
+  const [email, setEmail] = useState("");
+  const [name, setName] = useState("");
+  const [googleReviewURL, setGoogleReviewURL] = useState("");
+  const [imageUrl, setImageUrl] = useState( "https://png.pngtree.com/png-vector/20210121/ourmid/pngtree-restaurant-icon-design-template-illustration-png-image_2774777.jpg",);
+
+  const [uploading, setUploading] = useState(false);
+  const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const [storageId, setStorageId] = useState<string | null>(null);
+  const imageInput = useRef<HTMLInputElement>(null);
+
+  const getMyResturant = useQuery(api.functions.resturants.getMyRestaurant);
+
+  useEffect(() => {
+    if (getMyResturant === undefined || null) return;
+
+    setEmail(getMyResturant?.email || "");
+    setName(getMyResturant?.name || "");
+    setGoogleReviewURL(getMyResturant?.googleReviewURL || "");
+    setImageUrl(
+      getMyResturant?.imageUrl ||
         "https://png.pngtree.com/png-vector/20210121/ourmid/pngtree-restaurant-icon-design-template-illustration-png-image_2774777.jpg",
     );
+  }, [getMyResturant]);
 
-    const getMyResturant = useQuery(api.functions.resturants.getMyRestaurant);
+  const updateResturant = useMutation(
+    api.functions.resturants.updateRestaurant,
+  );
+  const generateUploadUrl = useMutation(
+    api.functions.imageUpload.generateUploadUrl,
+  );
 
-    useEffect(() => {
-        if (getMyResturant === undefined || null) return;
-            setEmail(getMyResturant?.email || "");
-            setName(getMyResturant?.name || "");
-            setImageUrl(
-                getMyResturant?.imageUrl ||
-                "https://png.pngtree.com/png-vector/20210121/ourmid/pngtree-restaurant-icon-design-template-illustration-png-image_2774777.jpg",
-            );
-    }, [getMyResturant]);
+  useEffect(() => {
+    const uploadImage = async () => {
+      if (!selectedImage) return;
 
-    const updateResturant = useMutation(
-        api.functions.resturants.updateRestaurant,
-    );
-    const handleSubmit = () => {
-        updateResturant({ name, imageUrl })
-            .then(() => toast.success("Name updated successfully"))
-            .catch(() => {
-                console.error("Failed to update restaurant");
-            });
+      setUploading(true);
+
+      try {
+        const postUrl = await generateUploadUrl();
+        setImageUrl(postUrl); // optional: this is not the image URL to display
+
+        const result = await fetch(postUrl, {
+          method: "POST",
+          headers: { "Content-Type": selectedImage.type },
+          body: selectedImage,
+        });
+
+        const { storageId } = await result.json();
+        setStorageId(storageId);
+      } catch (error) {
+        console.error("Upload failed:", error);
+      } finally {
+        setUploading(false);
+      }
     };
 
-    return (
-        <Card>
-            <div className="flex items-start justify-start gap-9">
-                <CardHeader className="pb-4">
-                    <Dialog>
-                        <DialogTrigger asChild>
-                            <button
-                                type="button"
-                                aria-label="Edit logo"
-                                className={cn(
-                                    "group relative h-16 w-16 overflow-hidden rounded-md border",
-                                    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-                                )}
-                            >
-                                <img
-                                    src={imageUrl}
-                                    alt="Current brand logo"
-                                    className="h-full w-full object-cover"
-                                />
-                                <div className="pointer-events-none absolute inset-0 grid place-items-center bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">
-                                    <span className="rounded bg-black/70 px-2 py-1 text-xs font-medium text-white">
-                                        Edit
-                                    </span>
-                                </div>
-                            </button>
-                        </DialogTrigger>
+    uploadImage();
+  }, [selectedImage]);
 
-                        {/* Modal with upload prompt (UI-only) */}
-                        <DialogContent className="sm:max-w-md">
-                            <DialogHeader>
-                                <DialogTitle>Update logo</DialogTitle>
-                                <DialogDescription>
-                                    Open a file or drag and drop to replace your logo.
-                                </DialogDescription>
-                            </DialogHeader>
+  const handleSubmit = async () => {
+    const parameters = {};
+    if (storageId) {
+      Object.assign(parameters, { imageUrl: storageId });
+    }
+    if (name) {
+      Object.assign(parameters, { name });
+    }
+    if (googleReviewURL) {
+      Object.assign(parameters, { googleReviewURL });
+    }
+    updateResturant({ ...parameters })
+      .then(() => toast.success("Name updated successfully"))
+      .catch(() => {
+        console.error("Failed to update restaurant");
+      });
+  };
 
-                            <div className="mt-2">
-                                <label
-                                    htmlFor="logo-upload"
-                                    className={cn(
-                                        "flex cursor-pointer items-center justify-center rounded-md border border-dashed p-6 text-center",
-                                        "hover:bg-muted/50 transition-colors",
-                                    )}
-                                >
-                                    <div className="flex flex-col items-center">
-                                        <FileUp
-                                            className="h-6 w-6 text-muted-foreground"
-                                            aria-hidden="true"
-                                        />
-                                        <div className="mt-2 text-sm">
-                                            <span className="font-medium text-primary underline">
-                                                Open file
-                                            </span>
-                                            <span className="text-muted-foreground">
-                                                {" "}
-                                                or drag and drop
-                                            </span>
-                                        </div>
-                                        <p className="mt-1 text-xs text-muted-foreground">
-                                            PNG or JPG, up to 2MB
-                                        </p>
-                                    </div>
-                                </label>
-                                <input id="logo-upload" type="file" className="sr-only" />
-                            </div>
+  return (
+    <Card>
+      <div className="flex items-start justify-start gap-9">
+        <CardHeader className="pb-4">
+          <Dialog>
+            <DialogTrigger asChild>
+              <button
+                type="button"
+                aria-label="Edit logo"
+                className={cn(
+                  "group relative h-16 w-16 overflow-hidden rounded-md border",
+                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                )}
+              >
+                <img
+                  src={imageUrl}
+                  alt="Current brand logo"
+                  className="h-full w-full object-cover"
+                />
+                <div className="pointer-events-none absolute inset-0 grid place-items-center bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">
+                  <span className="rounded bg-black/70 px-2 py-1 text-xs font-medium text-white">
+                    Edit
+                  </span>
+                </div>
+              </button>
+            </DialogTrigger>
 
-                            <div className="mt-4 flex justify-end gap-2">
-                                <DialogClose asChild>
-                                    <Button variant="outline">Cancel</Button>
-                                </DialogClose>
-                                <Button>Save</Button>
-                            </div>
-                        </DialogContent>
-                    </Dialog>
-                </CardHeader>
+            {/* Modal with upload prompt (UI-only) */}
+            <DialogContent className="sm:max-w-md">
+              <DialogHeader>
+                <DialogTitle>Update logo</DialogTitle>
+                <DialogDescription>
+                  Open a file or drag and drop to replace your logo.
+                </DialogDescription>
+              </DialogHeader>
 
-                <CardContent className="space-y-4 flex-1">
-                    {/* Email */}
-                    <div className="space-y-2">
-                        <Label htmlFor="email">Email</Label>
-                        <Input
-                            className="border-1 border-black"
-                            id="email"
-                            type="email"
-                            defaultValue={email}
-                            disabled
-                        />
+              <div className="mt-2">
+                <label
+                  htmlFor="logo-upload"
+                  className={cn(
+                    "flex cursor-pointer items-center justify-center rounded-md border border-dashed p-6 text-center",
+                    "hover:bg-muted/50 transition-colors",
+                  )}
+                >
+                  <div className="flex flex-col items-center">
+                    <FileUp
+                      className="h-6 w-6 text-muted-foreground"
+                      aria-hidden="true"
+                    />
+                    <div className="mt-2 text-sm">
+                      <span className="font-medium text-primary underline">
+                        Open file
+                      </span>
+                      <span className="text-muted-foreground">
+                        {" "}
+                        or drag and drop
+                      </span>
                     </div>
+                    <p className="mt-1 text-xs text-muted-foreground">
+                      PNG or JPG, up to 2MB
+                    </p>
+                  </div>
+                </label>
+                <input id="logo-upload" type="file" className="sr-only" />
+              </div>
 
-                    {/* Preferred name */}
-                    <div className="space-y-2">
-                        <Label htmlFor="name">Resturant name (visible to others)</Label>
-                        <Input
-                            className="border-1 border-black"
-                            id="name"
-                            type="text"
-                            defaultValue={name}
-                            onChange={(e) => setName(e.target.value)}
-                        />
-                    </div>
-                </CardContent>
-            </div>
-            <CardFooter>
-                <Button onClick={handleSubmit}>Save</Button>
-            </CardFooter>
-        </Card>
-    );
+              <div className="mt-4 flex justify-end gap-2">
+                <DialogClose asChild>
+                  <Button variant="outline">Cancel</Button>
+                </DialogClose>
+                <Button>Save</Button>
+              </div>
+            </DialogContent>
+          </Dialog>
+        </CardHeader>
+
+        <CardContent className="space-y-4 flex-1">
+          {/* Email */}
+          <div className="space-y-2">
+            <Label htmlFor="email">Email</Label>
+            <Input
+              className="border-1 border-black"
+              id="email"
+              type="email"
+              defaultValue={email}
+              disabled
+            />
+          </div>
+
+          {/* Preferred name */}
+          <div className="space-y-2">
+            <Label htmlFor="name">Resturant name (visible to others)</Label>
+            <Input
+              className="border-1 border-black"
+              id="name"
+              type="text"
+              defaultValue={name}
+              onChange={(e) => setName(e.target.value)}
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="name">Google Review Link</Label>
+            <Input
+              className="border-1 border-black"
+              id="googleReviewURL"
+              type="text"
+              defaultValue={googleReviewURL}
+              onChange={(e) => setGoogleReviewURL(e.target.value)}
+            />
+          </div>
+        </CardContent>
+      </div>
+      <CardFooter>
+        <Button onClick={handleSubmit}>Save</Button>
+      </CardFooter>
+    </Card>
+  );
 }

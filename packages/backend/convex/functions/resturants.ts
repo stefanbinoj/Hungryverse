@@ -20,7 +20,8 @@ export const checkRestaurantExists = query({
 export const createResturant = mutation({
     args: {
         name: v.string(),
-        imageUrl: v.optional(v.string()),
+        googleReviewURL: v.string(),
+        imageUrl: v.optional(v.id("_storage")),
     },
     handler: async (ctx, args) => {
         const identity = await ctx.auth.getUserIdentity();
@@ -34,13 +35,12 @@ export const createResturant = mutation({
                 identity.email ??
                 ((identity.emailAddresses as any[])[0]?.emailAddress as string) ??
                 "",
-            imageUrl:
-                args.imageUrl ||
-                "https://png.pngtree.com/png-vector/20210121/ourmid/pngtree-restaurant-icon-design-template-illustration-png-image_2774777.jpg",
+            imageUrl: args.imageUrl,
             isAllowed: true, // Default to false
             minValue: 3,
             allowRedirection: false,
             allowCouponCodeGeneration: true,
+            googleReviewURL: args.googleReviewURL,
         });
 
         return await ctx.db.get(newResturantId);
@@ -60,14 +60,20 @@ export const getMyRestaurant = query({
             .first();
 
         console.log("My restaurant:", myRestaurant);
-        return myRestaurant || null;
+        return {
+            ...myRestaurant,
+            imageUrl: myRestaurant?.imageUrl
+                ? await ctx.storage.getUrl(myRestaurant.imageUrl)
+                : "https://png.pngtree.com/png-vector/20210121/ourmid/pngtree-restaurant-icon-design-template-illustration-png-image_2774777.jpg",
+        };
     },
 });
 
 export const updateRestaurant = mutation({
     args: {
         name: v.optional(v.string()),
-        imageUrl: v.optional(v.string()),
+        googleReviewURL: v.optional(v.string()),
+        imageUrl: v.optional(v.id("_storage")),
     },
     handler: async (ctx, args) => {
         const identity = await ctx.auth.getUserIdentity();
@@ -84,12 +90,15 @@ export const updateRestaurant = mutation({
             throw new Error("Restaurant not found");
         }
 
-        const updatedFields: { name?: string; imageUrl?: string } = {};
+        const updatedFields: typeof args = {};
         if (args.name !== undefined) {
             updatedFields.name = args.name;
         }
         if (args.imageUrl !== undefined) {
             updatedFields.imageUrl = args.imageUrl;
+        }
+        if (args.googleReviewURL !== undefined) {
+            (updatedFields).googleReviewURL = args.googleReviewURL;
         }
 
         await ctx.db.patch(myRestaurant._id, updatedFields);

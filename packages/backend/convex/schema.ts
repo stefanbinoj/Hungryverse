@@ -6,10 +6,11 @@ export default defineSchema({
         userId: v.string(),
         name: v.string(),
         email: v.string(),
-        imageUrl: v.optional(v.string()),
         minValue: v.number(),
         allowRedirection: v.boolean(),
         allowCouponCodeGeneration: v.boolean(),
+        googleReviewURL: v.string(),
+        imageUrl: v.optional(v.id("_storage")),
         isAllowed: v.boolean(),
     }),
 

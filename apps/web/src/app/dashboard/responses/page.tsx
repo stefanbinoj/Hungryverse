@@ -20,7 +20,7 @@ import {
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import { Trash2, Star, Phone } from "lucide-react";
+import { Trash2, Phone } from "lucide-react";
 import { Authenticated, useMutation, useQuery } from "convex/react";
 import { api } from "@feedbacl/backend/convex/_generated/api";
 import type { Id } from "@feedbacl/backend/convex/_generated/dataModel";
@@ -63,11 +63,8 @@ function ResponsePageComponent() {
     };
 
     const deleteResponse = useMutation(api.functions.responses.deleteResponse);
-    const handleDelete = () => {
-        if (!selectedResponse) return;
-        deleteResponse({ responseId: selectedResponse._id });
-        setIsModalOpen(false);
-        setSelectedResponse(null);
+    const handleDelete = (responseId: Id<"responses">) => {
+        deleteResponse({ responseId: responseId });
     };
     if (responses === undefined) {
         return (
@@ -101,12 +98,12 @@ function ResponsePageComponent() {
                                 <CardHeader>
                                     <div className="flex justify-between items-center">
                                         <CardTitle>
-                                            Rating:
+                                            Rating:{" "}
                                             {(response.foodRating +
                                                 response.serviceRating +
                                                 response.ambianceRating +
                                                 response.cleanlinessRating) /
-                                                20}
+                                                4}
                                         </CardTitle>
                                         <AlertDialog>
                                             <AlertDialogTrigger
@@ -130,12 +127,18 @@ function ResponsePageComponent() {
                                                     </AlertDialogDescription>
                                                 </AlertDialogHeader>
                                                 <AlertDialogFooter>
-                                                    <AlertDialogCancel className="cursor-pointer">
+                                                    <AlertDialogCancel
+                                                        className="cursor-pointer"
+                                                        onClick={(e) => e.stopPropagation()}
+                                                    >
                                                         Cancel
                                                     </AlertDialogCancel>
                                                     <AlertDialogAction
                                                         variant="destructive"
-                                                        onClick={() => handleDelete()}
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            handleDelete(response._id);
+                                                        }}
                                                         className="bg-red-700 text-white cursor-pointer"
                                                     >
                                                         Delete
@@ -168,7 +171,7 @@ function ResponsePageComponent() {
                                             selectedResponse.cleanlinessRating +
                                             selectedResponse.foodRating +
                                             selectedResponse.serviceRating) /
-                                        20
+                                        4
                                     }
                                 />
                             </div>
