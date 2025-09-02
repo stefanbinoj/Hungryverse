@@ -37,10 +37,15 @@ export const createResturant = mutation({
                 "",
             imageUrl: args.imageUrl,
             isAllowed: true, // Default to false
+            googleReviewURL: args.googleReviewURL,
+        });
+
+        await ctx.db.insert("settings", {
+            resturantId: newResturantId,
             minValue: 3,
             allowRedirection: false,
             allowCouponCodeGeneration: true,
-            googleReviewURL: args.googleReviewURL,
+            showImage: args.imageUrl ? true : false,
         });
 
         return await ctx.db.get(newResturantId);
@@ -98,7 +103,7 @@ export const updateRestaurant = mutation({
             updatedFields.imageUrl = args.imageUrl;
         }
         if (args.googleReviewURL !== undefined) {
-            (updatedFields).googleReviewURL = args.googleReviewURL;
+            updatedFields.googleReviewURL = args.googleReviewURL;
         }
 
         await ctx.db.patch(myRestaurant._id, updatedFields);

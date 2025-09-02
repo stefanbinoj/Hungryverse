@@ -6,12 +6,17 @@ export default defineSchema({
         userId: v.string(),
         name: v.string(),
         email: v.string(),
-        minValue: v.number(),
-        allowRedirection: v.boolean(),
-        allowCouponCodeGeneration: v.boolean(),
         googleReviewURL: v.string(),
         imageUrl: v.optional(v.id("_storage")),
         isAllowed: v.boolean(),
+    }),
+
+    settings: defineTable({
+        resturantId: v.id("restaurants"),
+        minValue: v.number(),
+        allowRedirection: v.boolean(),
+        allowCouponCodeGeneration: v.boolean(),
+        showImage: v.boolean(),
     }),
 
     responses: defineTable({

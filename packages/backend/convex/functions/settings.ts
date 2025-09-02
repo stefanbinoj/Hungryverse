@@ -17,10 +17,17 @@ export const getRestaurantSettings = query({
             throw new Error("Restaurant not found");
         }
 
-        return {
-            minValue: restaurant?.minValue,
-            allowRedirection: restaurant?.allowRedirection,
-            allowCouponCodeGeneration: restaurant?.allowCouponCodeGeneration,
+        const settings = await ctx.db
+            .query("settings")
+            .filter((q) => q.eq(q.field("resturantId"), restaurant._id))
+            .first();
+
+        return settings || {
+            resturantId: restaurant._id,
+            minValue: 0,
+            allowRedirection: false,
+            allowCouponCodeGeneration: false,
+            showImage: true,
         };
     },
 });
@@ -30,6 +37,7 @@ export const updateRestaurantSettings = mutation({
         minValue: v.optional(v.number()),
         allowRedirection: v.optional(v.boolean()),
         allowCouponCodeGeneration: v.optional(v.boolean()),
+        showImage: v.optional(v.boolean()),
     },
     handler: async (ctx, args) => {
         const identity = await ctx.auth.getUserIdentity();
@@ -50,6 +58,7 @@ export const updateRestaurantSettings = mutation({
             minValue?: number;
             allowRedirection?: boolean;
             allowCouponCodeGeneration?: boolean;
+            showImage?: boolean;
         } = {};
 
         if (args.minValue !== undefined) {
@@ -61,9 +70,26 @@ export const updateRestaurantSettings = mutation({
         if (args.allowCouponCodeGeneration !== undefined) {
             updatedFields.allowCouponCodeGeneration = args.allowCouponCodeGeneration;
         }
+        if (args.showImage !== undefined) {
+            updatedFields.showImage = args.showImage;
+        }
 
-        await ctx.db.patch(restaurant._id, updatedFields);
-
-        return await ctx.db.get(restaurant._id);
+        const existingSettings = await ctx.db
+            .query("settings")
+            .filter((q) => q.eq(q.field("resturantId"), restaurant._id))
+            .first();
+        if (existingSettings) {
+            await ctx.db.patch(existingSettings._id, updatedFields);
+            return await ctx.db.get(existingSettings._id);
+        } else {
+            const newSettingsId = await ctx.db.insert("settings", {
+                resturantId: restaurant._id,
+                minValue: args.minValue ?? 0,
+                allowRedirection: args.allowRedirection ?? false,
+                allowCouponCodeGeneration: args.allowCouponCodeGeneration ?? false,
+                showImage: true,
+            });
+            return await ctx.db.get(newSettingsId);
+        }
     },
 });

@@ -36,6 +36,7 @@ export function SettingsForm() {
     const [minValue, setMinValue] = React.useState<number>(10);
     const [redirectEnabled, setRedirectEnabled] = React.useState<boolean>(false);
     const [couponEnabled, setCouponEnabled] = React.useState<boolean>(false);
+    const [showImage, setShowImage] = React.useState<boolean>(true);
     const [showDialog, setShowDialog] = React.useState<boolean>(false);
     const [intendedRedirectState, setIntendedRedirectState] =
         React.useState<boolean>(false);
@@ -48,6 +49,7 @@ export function SettingsForm() {
         setMinValue(getRestaurantSettings.minValue);
         setRedirectEnabled(getRestaurantSettings.allowRedirection);
         setCouponEnabled(getRestaurantSettings.allowCouponCodeGeneration);
+        setShowImage(getRestaurantSettings.showImage);
     }, [getRestaurantSettings]);
 
     const updateRestaurantSettings = useMutation(
@@ -58,6 +60,7 @@ export function SettingsForm() {
             minValue,
             allowRedirection: redirectEnabled,
             allowCouponCodeGeneration: couponEnabled,
+            showImage,
         })
             .then(() => {
                 toast.success("Settings updated successfully");
@@ -156,6 +159,24 @@ export function SettingsForm() {
                         checked={couponEnabled}
                         onCheckedChange={setCouponEnabled}
                         aria-label="Enable coupon code generation"
+                        className="border border-border"
+                    />
+                </div>
+                <div className="my-6 h-px w-full bg-border" />
+                <div className="flex items-start justify-between gap-4">
+                    <div className="space-y-1">
+                        <Label htmlFor="image" className="text-sm font-medium">
+                            Show logo
+                        </Label>
+                        <p className="text-sm text-muted-foreground">
+                            Turn on to show your restaurant logo on the feedback form.
+                        </p>
+                    </div>
+                    <Switch
+                        id="showImage"
+                        checked={showImage}
+                        onCheckedChange={setShowImage}
+                        aria-label="Enable show image"
                         className="border border-border"
                     />
                 </div>
