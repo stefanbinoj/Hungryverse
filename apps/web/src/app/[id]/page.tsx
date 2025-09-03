@@ -142,6 +142,7 @@ export default function RestaurantFeedbackForm() {
     const validatePhoneNumber = useAction(
         api.actions.validatePhoneNumber.validatePhoneNumber,
     );
+    const sendWhatsApp = useAction(api.actions.genCouponCodeAndSaveToDB.doAll);
 
     const handleSubmit = async () => {
         if (formData.phoneNumber.length < 10) {
@@ -161,15 +162,24 @@ export default function RestaurantFeedbackForm() {
                 setIsSubmitting(false);
                 return;
             }
+            const newResponse = await createResponse({
+                ...formData,
+                restrurantId: id,
+            });
 
             if (settings.allowCouponCodeGeneration) {
-                // coupon code generation
+                try {
+                    await sendWhatsApp({
+                        phone: validation.phoneNumber!,
+                        responseId: newResponse,
+                    });
+                } catch (err) {
+                    console.error("Error while sending WhatsApp message:", err);
+                    toast.error("An unexpected error occurred while sending WhatsApp.");
+                }
             }
 
-            console.log('settings', settings);
-            if (
-                settings.allowRedirection
-            ) {
+            if (settings.allowRedirection) {
                 const totalRating =
                     formData.foodRating +
                     formData.serviceRating +
@@ -183,11 +193,10 @@ export default function RestaurantFeedbackForm() {
                     window.location.href = settings.redirectionUrl!;
                 }
             }
-            createResponse({ ...formData, restrurantId: id });
+
             setIsSubmitted(true);
         }
     };
-
     if (isSubmitted) {
         return (
             <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">

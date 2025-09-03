@@ -30,4 +30,12 @@ export default defineSchema({
         couponCode: v.optional(v.string()),
         phoneNumber: v.string(),
     }),
+
+    couponCodes: defineTable({
+        couponCode: v.string(),
+        restaurantId: v.id("restaurants"),
+        used: v.boolean(),
+        phoneNumber: v.string(),
+        responseId: v.id("responses"),
+    }),
 });

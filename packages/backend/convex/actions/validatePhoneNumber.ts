@@ -14,6 +14,7 @@ export const validatePhoneNumber = action(
             const result = await client.lookups.v2.phoneNumbers(phone).fetch();
             return {
                 valid: result.valid,
+                phoneNumber: result.phoneNumber,
                 errors: result.validationErrors,
             };
         } catch (err: any) {

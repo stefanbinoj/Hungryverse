@@ -86,7 +86,7 @@ export function SettingsForm() {
                         id="min-value"
                         value={[minValue]}
                         min={0}
-                        max={10}
+                        max={5}
                         step={1}
                         onValueChange={(v) => setMinValue(v[0] ?? 0)}
                         aria-label="Minimum value"

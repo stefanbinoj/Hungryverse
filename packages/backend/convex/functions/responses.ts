@@ -23,7 +23,8 @@ export const createResponse = mutation({
             phoneNumber: args.phoneNumber,
         };
         const responseId = await ctx.db.insert("responses", newResponse);
-        return await ctx.db.get(responseId);
+        console.log("Created new response with ID:", responseId);
+        return responseId;
     },
 });
 
