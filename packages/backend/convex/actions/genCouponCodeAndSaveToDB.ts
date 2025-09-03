@@ -1,6 +1,6 @@
 "use node";
 
-import { Id } from "../_generated/dataModel";
+import type{ Id } from "../_generated/dataModel";
 import { action } from "../_generated/server";
 import { Twilio } from "twilio";
 import { api } from "../_generated/api";
