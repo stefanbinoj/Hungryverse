@@ -64,7 +64,6 @@ export const getMyRestaurant = query({
             .filter((q) => q.eq(q.field("userId"), identity.subject))
             .first();
 
-        console.log("My restaurant:", myRestaurant);
         return {
             ...myRestaurant,
             imageUrl: myRestaurant?.imageUrl

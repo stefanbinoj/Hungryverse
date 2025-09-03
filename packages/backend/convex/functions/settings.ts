@@ -22,13 +22,15 @@ export const getRestaurantSettings = query({
             .filter((q) => q.eq(q.field("resturantId"), restaurant._id))
             .first();
 
-        return settings || {
-            resturantId: restaurant._id,
-            minValue: 0,
-            allowRedirection: false,
-            allowCouponCodeGeneration: false,
-            showImage: true,
-        };
+        return (
+            settings || {
+                resturantId: restaurant._id,
+                minValue: 0,
+                allowRedirection: false,
+                allowCouponCodeGeneration: false,
+                showImage: true,
+            }
+        );
     },
 });
 
@@ -91,5 +93,55 @@ export const updateRestaurantSettings = mutation({
             });
             return await ctx.db.get(newSettingsId);
         }
+    },
+});
+
+export const getFormSettings = query({
+    args: {
+        restaurantId: v.id("restaurants"),
+    },
+    handler: async (ctx, args) => {
+
+        if(!args.restaurantId) {
+            return null;
+        }
+
+        // 1. Get settings
+        const settings = await ctx.db
+            .query("settings")
+            .filter((q) => q.eq(q.field("resturantId"), args.restaurantId))
+            .first();
+
+        if (!settings) {
+            throw new Error("Settings not found");
+        }
+
+        // 2. Initialize optional values
+        let imageUrl: string | undefined;
+        let minValue: number | undefined;
+        let redirectionUrl: string | undefined;
+
+        const restaurant = await ctx.db.get(args.restaurantId);
+        if (settings.showImage) {
+            const imageId = restaurant?.imageUrl;
+            if (imageId) {
+                imageUrl = (await ctx.storage.getUrl(imageId)) as string;
+            }
+        }
+
+        if (settings.allowRedirection) {
+            minValue = settings.minValue;
+            redirectionUrl = restaurant?.googleReviewURL;
+        }
+
+        // 3. Return final object
+        return {
+            allowRedirection: settings.allowRedirection,
+            allowCouponCodeGeneration: settings.allowCouponCodeGeneration,
+            showImage: settings.showImage,
+            ...(minValue !== undefined && { minValue }),
+            ...(imageUrl && { imageUrl }),
+            ...(redirectionUrl && { redirectionUrl })
+        };
     },
 });

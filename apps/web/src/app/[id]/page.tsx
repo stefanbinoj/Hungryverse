@@ -8,9 +8,11 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Star, CheckCircle, ArrowLeft } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useMutation } from "convex/react";
+import { useAction, useMutation, useQuery } from "convex/react";
 import { api } from "@feedbacl/backend/convex/_generated/api";
 import type { Id } from "@feedbacl/backend/convex/_generated/dataModel";
+import Image from "next/image";
+import { toast } from "sonner";
 
 interface FormData {
     foodRating: number;
@@ -38,11 +40,10 @@ const StarRating = ({
                     className="transition-colors hover:scale-110 transform transition-transform"
                 >
                     <Star
-                        className={`w-12 h-12 ${
-                            star <= rating
+                        className={`w-12 h-12 ${star <= rating
                                 ? "fill-yellow-400 text-yellow-400"
                                 : "fill-gray-300 text-gray-300"
-                        }`}
+                            }`}
                     />
                 </button>
             ))}
@@ -54,6 +55,11 @@ export default function RestaurantFeedbackForm() {
     const params = useParams<{ id: Id<"restaurants"> }>();
     const id = params.id;
 
+    const settings = useQuery(
+        api.functions.settings.getFormSettings,
+        id ? { restaurantId: id } : "skip",
+    );
+
     const [currentStep, setCurrentStep] = useState(1);
     const [formData, setFormData] = useState<FormData>({
         foodRating: 0,
@@ -64,6 +70,7 @@ export default function RestaurantFeedbackForm() {
         phoneNumber: "",
     });
     const [isSubmitted, setIsSubmitted] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const questions = [
         {
@@ -132,12 +139,54 @@ export default function RestaurantFeedbackForm() {
     };
 
     const createResponse = useMutation(api.functions.responses.createResponse);
-    const handleSubmit = () => {
-        createResponse({ ...formData, restrurantId: id });
-        setIsSubmitted(true);
+    const validatePhoneNumber = useAction(
+        api.actions.validatePhoneNumber.validatePhoneNumber,
+    );
+
+    const handleSubmit = async () => {
+        if (formData.phoneNumber.length < 10) {
+            toast.error("Please enter a valid 10-digit phone number.");
+            return;
+        }
+
+        setIsSubmitting(true);
+
+        if (settings) {
+            const validation = await validatePhoneNumber({
+                phone: `+91${formData.phoneNumber}`,
+            });
+
+            if (!validation.valid) {
+                toast.error("Please enter a valid phone number.");
+                setIsSubmitting(false);
+                return;
+            }
+
+            if (settings.allowCouponCodeGeneration) {
+                // coupon code generation
+            }
+
+            console.log('settings', settings);
+            if (
+                settings.allowRedirection
+            ) {
+                const totalRating =
+                    formData.foodRating +
+                    formData.serviceRating +
+                    formData.ambianceRating +
+                    formData.cleanlinessRating;
+                const averageRating = totalRating / 4;
+                console.log("Average Rating:", averageRating);
+                console.log("Min Value:", settings.minValue);
+                if (averageRating >= settings.minValue!) {
+                    console.log("hi", settings.redirectionUrl);
+                    window.location.href = settings.redirectionUrl!;
+                }
+            }
+            createResponse({ ...formData, restrurantId: id });
+            setIsSubmitted(true);
+        }
     };
-
-
 
     if (isSubmitted) {
         return (
@@ -145,7 +194,7 @@ export default function RestaurantFeedbackForm() {
                 <Card className="w-full max-w-md bg-white shadow-sm">
                     <CardContent className="pt-6">
                         <div className="text-center space-y-4">
-                            <CheckCircle className="w-16 h-16 text-green-500 mx-auto" />
+                            <CheckCircle className="w-16 h-16 text-green-400 mx-auto" />
                             <h2 className="text-2xl font-bold text-gray-900">Thank You!</h2>
                             <p className="text-gray-600">
                                 Your feedback has been submitted successfully.
@@ -161,7 +210,7 @@ export default function RestaurantFeedbackForm() {
         <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
             <div className="w-full max-w-2xl">
                 <Card className="py-0 bg-white shadow-sm border-0 rounded-lg">
-                    <CardContent className="p-8">
+                    <CardContent className="px-4 pt-6 pb-4">
                         <AnimatePresence mode="wait">
                             <motion.div
                                 key={currentStep}
@@ -170,9 +219,20 @@ export default function RestaurantFeedbackForm() {
                                 exit={{ opacity: 0, x: -20 }}
                                 transition={{ duration: 0.3 }}
                             >
-                                <h2 className="text-xl font-semibold text-gray-900 mb-6">
-                                    {questions[currentStep - 1].question}
-                                </h2>
+                                <div className="flex items-center ml-4 space-x-4 mb-4">
+                                    <h2 className="text-xl font-semibold text-gray-900  flex-1 break-words">
+                                        {questions[currentStep - 1].question}
+                                    </h2>
+                                    {settings?.showImage && settings.imageUrl && (
+                                        <Image
+                                            src={settings.imageUrl}
+                                            alt="Restaurant"
+                                            width={40}
+                                            height={40}
+                                            className="rounded-md h-[40px] w-[40px] object-cover flex-shrink-0"
+                                        />
+                                    )}
+                                </div>
                                 {(() => {
                                     const question = questions[currentStep - 1];
                                     switch (question.type) {
@@ -180,7 +240,9 @@ export default function RestaurantFeedbackForm() {
                                             return (
                                                 <StarRating
                                                     rating={question.rating as number}
-                                                    onRatingChange={question.onRatingChange as (rating: number) => void}
+                                                    onRatingChange={
+                                                        question.onRatingChange as (rating: number) => void
+                                                    }
                                                 />
                                             );
                                         case "textarea":
@@ -188,7 +250,11 @@ export default function RestaurantFeedbackForm() {
                                                 <Textarea
                                                     placeholder="Please share your thoughts about your visit..."
                                                     value={question.value as string}
-                                                    onChange={question.onChange as (e: React.ChangeEvent<HTMLTextAreaElement>) => void}
+                                                    onChange={
+                                                        question.onChange as (
+                                                            e: React.ChangeEvent<HTMLTextAreaElement>,
+                                                        ) => void
+                                                    }
                                                     className="min-h-32 resize-none border-gray-200 focus:border-gray-400"
                                                 />
                                             );
@@ -200,7 +266,11 @@ export default function RestaurantFeedbackForm() {
                                                     pattern="[0-9]*"
                                                     placeholder="98765 43210"
                                                     value={question.value}
-                                                    onChange={question.onChange as (e: React.ChangeEvent<HTMLInputElement>) => void}
+                                                    onChange={
+                                                        question.onChange as (
+                                                            e: React.ChangeEvent<HTMLInputElement>,
+                                                        ) => void
+                                                    }
                                                     className="border-gray-200 focus:border-gray-400"
                                                 />
                                             );
@@ -234,6 +304,7 @@ export default function RestaurantFeedbackForm() {
                             )}
                             {currentStep === totalSteps && (
                                 <Button
+                                    disabled={isSubmitting || formData.phoneNumber.length < 10}
                                     onClick={handleSubmit}
                                     className="bg-gray-900 hover:bg-gray-800"
                                 >
