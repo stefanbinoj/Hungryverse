@@ -3,7 +3,7 @@
 import { useState, type ElementType } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { BarChart, MessageSquare, Settings, Info, Menu } from "lucide-react";
+import { BarChart, MessageSquare, Settings, Info, Menu, Code } from "lucide-react";
 import clsx from "clsx";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
@@ -12,6 +12,7 @@ import { type Route } from "next";
 const mainLinks: { href: Route; label: string; icon: ElementType }[] = [
   { href: "/dashboard/analytics", label: "Analytics", icon: BarChart },
   { href: "/dashboard/responses", label: "Responses", icon: MessageSquare },
+  { href: '/dashboard/code', label: 'Coupon Code', icon: Code },
 ];
 
 const bottomLinks: { href: Route; label: string; icon: ElementType }[] = [
