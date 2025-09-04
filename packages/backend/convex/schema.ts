@@ -29,7 +29,6 @@ export default defineSchema({
     deleted: v.boolean(),
     couponCode: v.optional(v.string()),
     phoneNumber: v.string(),
-    //createdAtDesc: -Date.now(), // 👈 new field for descending sort
   }),
 
   couponCodes: defineTable({
@@ -38,6 +37,5 @@ export default defineSchema({
     used: v.boolean(),
     phoneNumber: v.string(),
     responseId: v.id("responses"),
-    //createdAtDesc: -Date.now(), // 👈 new field for descending sort
   }),
 });

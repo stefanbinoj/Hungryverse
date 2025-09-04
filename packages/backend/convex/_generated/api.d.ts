@@ -16,6 +16,8 @@ import type {
 import type * as actions_genCouponCodeAndSaveToDB from "../actions/genCouponCodeAndSaveToDB.js";
 import type * as actions_validatePhoneNumber from "../actions/validatePhoneNumber.js";
 import type * as functions_couponCode from "../functions/couponCode.js";
+import type * as functions_dashboard_card from "../functions/dashboard/card.js";
+import type * as functions_dashboard_chart from "../functions/dashboard/chart.js";
 import type * as functions_imageUpload from "../functions/imageUpload.js";
 import type * as functions_responses from "../functions/responses.js";
 import type * as functions_resturants from "../functions/resturants.js";
@@ -33,6 +35,8 @@ declare const fullApi: ApiFromModules<{
   "actions/genCouponCodeAndSaveToDB": typeof actions_genCouponCodeAndSaveToDB;
   "actions/validatePhoneNumber": typeof actions_validatePhoneNumber;
   "functions/couponCode": typeof functions_couponCode;
+  "functions/dashboard/card": typeof functions_dashboard_card;
+  "functions/dashboard/chart": typeof functions_dashboard_chart;
   "functions/imageUpload": typeof functions_imageUpload;
   "functions/responses": typeof functions_responses;
   "functions/resturants": typeof functions_resturants;
