@@ -73,7 +73,11 @@ export default function FeedbackMetrics() {
     const avgRatingRaw = (avgFood + avgService + avgClean + avgAmbiance) / 4 || 0;
     const avgRating = Math.round(avgRatingRaw * 10) / 10;
 
-    if(getSubmissions === undefined || getTotalSubmissions === undefined || getAverageRatings === undefined) {
+    if (
+        getSubmissions === undefined ||
+        getTotalSubmissions === undefined ||
+        getAverageRatings === undefined
+    ) {
         return <FeedbackMetricsSkeleton />;
     }
 
