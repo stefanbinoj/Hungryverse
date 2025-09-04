@@ -12,6 +12,7 @@ import {
 import { ArrowDownRight, ArrowUpRight, ChevronDown, Star } from "lucide-react";
 import { useQuery } from "convex/react";
 import { api } from "@feedbacl/backend/convex/_generated/api";
+import FeedbackMetricsSkeleton from "./feedback-metrics-skeleton";
 
 function formatNumber(n: number) {
     return n.toLocaleString();
@@ -56,10 +57,10 @@ export default function FeedbackMetrics() {
         if (period === "week") {
             return {
                 periodPrevValue: prev7DaysCount,
-                periodCaption: "vs previous 7 days",
+                periodCaption: "vs previous week",
             };
         }
-        return { periodPrevValue: prev15, periodCaption: "vs prior 15 days" };
+        return { periodPrevValue: prev15, periodCaption: "vs previous month" };
     }, [period, yesterdayCount, prev7DaysCount, prev15]);
 
     const periodPercent = toPercent(periodValue, periodPrevValue);
@@ -73,7 +74,7 @@ export default function FeedbackMetrics() {
     const avgRating = Math.round(avgRatingRaw * 10) / 10;
 
     if(getSubmissions === undefined || getTotalSubmissions === undefined || getAverageRatings === undefined) {
-        return <div>Loading...</div>;
+        return <FeedbackMetricsSkeleton />;
     }
 
     return (

@@ -11,6 +11,7 @@ import {
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
 import { useQuery } from "convex/react";
 import { api } from "@feedbacl/backend/convex/_generated/api";
+import FeedbackChartSkeleton from "./feedback-chart-skeleton";
 
 type RangeKey = "daily" | "weekly" | "monthly";
 
@@ -31,8 +32,7 @@ export default function FeedbackChart() {
     }, [range]);
 
     if (chartData === undefined) {
-        // Data is loading
-        <div>Loading chart...</div>;
+        return <FeedbackChartSkeleton />;
     }
 
     return (

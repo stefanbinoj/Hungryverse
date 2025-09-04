@@ -1,4 +1,4 @@
-import { Doc } from "../../_generated/dataModel";
+import type { Doc } from "../../_generated/dataModel";
 import { query } from "../../_generated/server";
 
 function groupByHour(responses: Doc<"responses">[]) {
