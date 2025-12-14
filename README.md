@@ -37,7 +37,7 @@ Open [http://localhost:3001](http://localhost:3001) in your browser to see the w
 Your app will connect to the Convex cloud backend automatically.
 
 
-
+*stupid project*
 
 
 ## Project Structure
