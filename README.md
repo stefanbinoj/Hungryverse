@@ -57,3 +57,11 @@ feedbacl/
 - `pnpm dev:web`: Start only the web application
 - `pnpm dev:setup`: Setup and configure your Convex project
 - `pnpm check-types`: Check TypeScript types across all apps
+
+## Contributing
+
+Pull requests are welcome!  
+Before submitting changes, please make sure to run:
+
+```bash
+pnpm check-types
